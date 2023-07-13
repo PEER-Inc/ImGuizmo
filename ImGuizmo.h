@@ -61,7 +61,7 @@ void EditTransform(const Camera& camera, matrix_t& matrix)
    ImGui::SameLine();
    if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
       mCurrentGizmoOperation = ImGuizmo::SCALE;
-   float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+   double matrixTranslation[3], matrixRotation[3], matrixScale[3];
    ImGuizmo::DecomposeMatrixToComponents(matrix.m16, matrixTranslation, matrixRotation, matrixScale);
    ImGui::InputFloat3("Tr", matrixTranslation, 3);
    ImGui::InputFloat3("Rt", matrixRotation, 3);
@@ -143,11 +143,11 @@ namespace IMGUIZMO_NAMESPACE
    // gizmo is rendered with gray half transparent color when disabled
    IMGUI_API void Enable(bool enable);
 
-   // helper functions for manualy editing translation/rotation/scale with an input float
-   // translation, rotation and scale float points to 3 floats each
+   // helper functions for manualy editing translation/rotation/scale with an input double
+   // translation, rotation and scale double points to 3 floats each
    // Angles are in degrees (more suitable for human editing)
    // example:
-   // float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+   // double matrixTranslation[3], matrixRotation[3], matrixScale[3];
    // ImGuizmo::DecomposeMatrixToComponents(gizmoMatrix.m16, matrixTranslation, matrixRotation, matrixScale);
    // ImGui::InputFloat3("Tr", matrixTranslation, 3);
    // ImGui::InputFloat3("Rt", matrixRotation, 3);
@@ -155,16 +155,16 @@ namespace IMGUIZMO_NAMESPACE
    // ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, gizmoMatrix.m16);
    //
    // These functions have some numerical stability issues for now. Use with caution.
-   IMGUI_API void DecomposeMatrixToComponents(const float* matrix, float* translation, float* rotation, float* scale);
-   IMGUI_API void RecomposeMatrixFromComponents(const float* translation, const float* rotation, const float* scale, float* matrix);
+   IMGUI_API void DecomposeMatrixToComponents(const double* matrix, double* translation, double* rotation, double* scale);
+   IMGUI_API void RecomposeMatrixFromComponents(const double* translation, const double* rotation, const double* scale, double* matrix);
 
-   IMGUI_API void SetRect(float x, float y, float width, float height);
+   IMGUI_API void SetRect(double x, double y, double width, double height);
    // default is false
    IMGUI_API void SetOrthographic(bool isOrthographic);
 
    // Render a cube with face color corresponding to face normal. Usefull for debug/tests
-   IMGUI_API void DrawCubes(const float* view, const float* projection, const float* matrices, int matrixCount);
-   IMGUI_API void DrawGrid(const float* view, const float* projection, const float* matrix, const float gridSize);
+   IMGUI_API void DrawCubes(const double* view, const double* projection, const double* matrices, int matrixCount);
+   IMGUI_API void DrawGrid(const double* view, const double* projection, const double* matrix, const double gridSize);
 
    // call it when you want a gizmo
    // Needs view and projection matrices. 
@@ -205,22 +205,22 @@ namespace IMGUIZMO_NAMESPACE
       WORLD
    };
 
-   IMGUI_API bool Manipulate(const float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix = NULL, const float* snap = NULL, const float* localBounds = NULL, const float* boundsSnap = NULL);
+   IMGUI_API bool Manipulate(const double* view, const double* projection, OPERATION operation, MODE mode, double* matrix, double* deltaMatrix = NULL, const double* snap = NULL, const double* localBounds = NULL, const double* boundsSnap = NULL);
    //
    // Please note that this cubeview is patented by Autodesk : https://patents.google.com/patent/US7782319B2/en
    // It seems to be a defensive patent in the US. I don't think it will bring troubles using it as
    // other software are using the same mechanics. But just in case, you are now warned!
    //
-   IMGUI_API void ViewManipulate(float* view, float length, ImVec2 position, ImVec2 size, ImU32 backgroundColor);
+   IMGUI_API void ViewManipulate(double* view, double length, ImVec2 position, ImVec2 size, ImU32 backgroundColor);
 
    // use this version if you did not call Manipulate before and you are just using ViewManipulate
-   IMGUI_API void ViewManipulate(float* view, const float* projection, OPERATION operation, MODE mode, float* matrix, float length, ImVec2 position, ImVec2 size, ImU32 backgroundColor);
+   IMGUI_API void ViewManipulate(double* view, const double* projection, OPERATION operation, MODE mode, double* matrix, double length, ImVec2 position, ImVec2 size, ImU32 backgroundColor);
 
    IMGUI_API void SetID(int id);
 
    // return true if the cursor is over the operation's gizmo
    IMGUI_API bool IsOver(OPERATION op);
-   IMGUI_API void SetGizmoSizeClipSpace(float value);
+   IMGUI_API void SetGizmoSizeClipSpace(double value);
 
    // Allow axis to flip
    // When true (default), the guizmo axis flip for better visibility
@@ -228,9 +228,9 @@ namespace IMGUIZMO_NAMESPACE
    IMGUI_API void AllowAxisFlip(bool value);
 
    // Configure the limit where axis are hidden
-   IMGUI_API void SetAxisLimit(float value);
+   IMGUI_API void SetAxisLimit(double value);
    // Configure the limit where planes are hiden
-   IMGUI_API void SetPlaneLimit(float value);
+   IMGUI_API void SetPlaneLimit(double value);
 
    enum COLOR
    {
@@ -256,14 +256,14 @@ namespace IMGUIZMO_NAMESPACE
    {
       IMGUI_API Style();
 
-      float TranslationLineThickness;   // Thickness of lines for translation gizmo
-      float TranslationLineArrowSize;   // Size of arrow at the end of lines for translation gizmo
-      float RotationLineThickness;      // Thickness of lines for rotation gizmo
-      float RotationOuterLineThickness; // Thickness of line surrounding the rotation gizmo
-      float ScaleLineThickness;         // Thickness of lines for scale gizmo
-      float ScaleLineCircleSize;        // Size of circle at the end of lines for scale gizmo
-      float HatchedAxisLineThickness;   // Thickness of hatched axis lines
-      float CenterCircleSize;           // Size of circle at the center of the translate/scale gizmo
+      double TranslationLineThickness;   // Thickness of lines for translation gizmo
+      double TranslationLineArrowSize;   // Size of arrow at the end of lines for translation gizmo
+      double RotationLineThickness;      // Thickness of lines for rotation gizmo
+      double RotationOuterLineThickness; // Thickness of line surrounding the rotation gizmo
+      double ScaleLineThickness;         // Thickness of lines for scale gizmo
+      double ScaleLineCircleSize;        // Size of circle at the end of lines for scale gizmo
+      double HatchedAxisLineThickness;   // Thickness of hatched axis lines
+      double CenterCircleSize;           // Size of circle at the center of the translate/scale gizmo
 
       ImVec4 Colors[COLOR::COUNT];
    };
