@@ -601,26 +601,6 @@ namespace IMGUIZMO_NAMESPACE
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    //
 
-   enum MOVETYPE
-   {
-      MT_NONE,
-      MT_MOVE_X,
-      MT_MOVE_Y,
-      MT_MOVE_Z,
-      MT_MOVE_YZ,
-      MT_MOVE_ZX,
-      MT_MOVE_XY,
-      MT_MOVE_SCREEN,
-      MT_ROTATE_X,
-      MT_ROTATE_Y,
-      MT_ROTATE_Z,
-      MT_ROTATE_SCREEN,
-      MT_SCALE_X,
-      MT_SCALE_Y,
-      MT_SCALE_Z,
-      MT_SCALE_XYZ
-   };
-
    static bool IsTranslateType(int type)
    {
      return type >= MT_MOVE_X && type <= MT_MOVE_SCREEN;
@@ -2507,8 +2487,14 @@ namespace IMGUIZMO_NAMESPACE
      gContext.mPlaneLimit = value;
    }
 
-   bool Manipulate(const double* view, const double* projection, OPERATION operation, MODE mode, double* matrix, double* deltaMatrix, const double* snap, const double* localBounds, const double* boundsSnap)
+   bool Manipulate(const double* view, const double* projection, OPERATION operation, MODE mode, double* matrix, double* deltaMatrix, const double* snap, const double* localBounds, const double* boundsSnap, MOVETYPE *moveType)
    {
+      // Initialize the move type parameter (if provided)
+      if (moveType)
+      {
+         *moveType = MT_NONE;
+      }
+
       // Scale is always local or matrix will be skewed when applying world scale or oriented matrix
       ComputeContext(view, projection, matrix, (operation & SCALE) ? LOCAL : mode);
 
@@ -2537,6 +2523,12 @@ namespace IMGUIZMO_NAMESPACE
                           HandleScale(matrix, deltaMatrix, operation, type, snap) ||
                           HandleRotation(matrix, deltaMatrix, operation, type, snap);
          }
+      }
+
+      // Initialize the move type parameter (if provided)
+      if (moveType)
+      {
+         *moveType = (MOVETYPE)type;
       }
 
       if (localBounds && !gContext.mbUsing)
